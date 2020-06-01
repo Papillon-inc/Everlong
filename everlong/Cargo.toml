@@ -7,3 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# mio = "0.7.0"
+slab = "0.4.2"
+bytes = "0.5.4"
+rml_rtmp = "0.3.2"
