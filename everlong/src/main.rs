@@ -14,7 +14,7 @@ use connection::{Connection, ConnectionError, ReadResult};
 use server::{Server, ServerResult};
 
 fn main() {
-    let address = "127.0.0.1:1935";
+    let address = "0.0.0.0:1935";
     let listener = TcpListener::bind(&address).unwrap();
 
     let (stream_sender, stream_receiver) = channel();
