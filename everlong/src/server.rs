@@ -9,8 +9,6 @@ use rml_rtmp::time::RtmpTimestamp;
 
 mod converter;
 
-//use converter::Converter;
-
 enum ClientAction {
     Waiting,
     Publishing(String), // Publishing to a stream key

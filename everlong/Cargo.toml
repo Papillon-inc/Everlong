@@ -6,6 +6,14 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "everlong"
+path = "src/main.rs"
+
+[lib]
+name = "everlong"
+path = "src/lib.rs"
+
 [dependencies]
 slab = "0.4.2"
 bytes = "0.5.4"

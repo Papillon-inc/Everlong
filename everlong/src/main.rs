@@ -2,16 +2,13 @@ extern crate bytes;
 extern crate slab;
 extern crate rml_rtmp;
 
-mod connection;
-mod server;
-
 use std::collections::{HashSet};
 use std::net::{TcpListener, TcpStream};
 use std::sync::mpsc::{channel, Receiver, TryRecvError};
 use std::thread;
 use slab::Slab;
-use connection::{Connection, ConnectionError, ReadResult};
-use server::{Server, ServerResult};
+
+use everlong::*;
 
 fn main() {
     let address = "0.0.0.0:1935";
