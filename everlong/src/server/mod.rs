@@ -7,6 +7,10 @@ use rml_rtmp::sessions::StreamMetadata;
 use rml_rtmp::chunk_io::Packet;
 use rml_rtmp::time::RtmpTimestamp;
 
+mod converter;
+
+//use converter::Converter;
+
 enum ClientAction {
     Waiting,
     Publishing(String), // Publishing to a stream key
@@ -160,6 +164,7 @@ impl Server {
             },
 
             ServerSessionEvent::VideoDataReceived {app_name: _, stream_key, data, timestamp} => {
+                //println!("{:?}", data);
                 self.handle_audio_video_data_received(stream_key, timestamp, data, ReceivedDataType::Video, server_results);
             },
 
