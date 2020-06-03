@@ -5,3 +5,16 @@ RTMP Streaming server
 
 ![licence](https://img.shields.io/github/license/Papillon-inc/Everlong)
 ![size](https://img.shields.io/github/languages/code-size/Papillon-inc/Everlong)
+
+## Request format
+- play
+
+```
+rtmp://X.X.X.X:6666/app_name/stream_key
+```
+
+- broadcast
+
+```
+rtmp://X.X.X.X:6666
+```
