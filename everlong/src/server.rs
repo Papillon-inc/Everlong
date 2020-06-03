@@ -162,7 +162,7 @@ impl Server {
             },
 
             ServerSessionEvent::VideoDataReceived {app_name: _, stream_key, data, timestamp} => {
-                //println!("{:?}", data);
+                converter::Converter::do_print();
                 self.handle_audio_video_data_received(stream_key, timestamp, data, ReceivedDataType::Video, server_results);
             },
 
