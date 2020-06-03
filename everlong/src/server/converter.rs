@@ -9,8 +9,8 @@ impl Converter {
         let mut writer = TsPacketWriter::new(std::io::stdout());
         let mut reader = TsPacketReader::new(std::io::stdin());
 
-        // while let Some(packet) = track_try_unwrap!(reader.read_ts_packet()) {
-        //     track_try_unwrap!(writer.write_ts_packet(&packet));
-        // }
+        while let Some(packet) = Result::unwrap(reader.read_ts_packet()) {
+             Result::unwrap(writer.write_ts_packet(&packet));
+        }
     }
 }
