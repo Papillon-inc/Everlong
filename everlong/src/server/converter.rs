@@ -8,7 +8,9 @@ use mpeg2ts::ts::{TsPacket, TsHeader, AdaptationField, TsPayload};
 use mpeg2ts::ts::{Pid, TransportScramblingControl, ContinuityCounter};
 use bytes::Bytes;
 
-pub struct Converter;
+pub struct Converter {
+    count: u64,
+}
 
 impl Converter {
     pub fn convert(data: &Bytes) {
