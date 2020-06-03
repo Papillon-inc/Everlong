@@ -1,21 +1,39 @@
 extern crate mpeg2ts;
+extern crate bytes;
 
 use mpeg2ts::ts::{TsPacketReader, TsPacketWriter, ReadTsPacket, WriteTsPacket};
+use mpeg2ts::ts::{AdaptationField, TsPayload};
+use bytes::Bytes;
 
 pub struct Converter;
 
 impl Converter {
-    // DEBUG FUNCTION
-    pub fn do_print() {
-        println!("Sappy");
-    }
+    pub fn convert(data: &Bytes) {
+        println!("Converter is called!");
+        // println!("{:?}", *data);
 
-    pub fn convert() {
         let mut writer = TsPacketWriter::new(std::io::stdout());
-        let mut reader = TsPacketReader::new(std::io::stdin());
 
-        while let Some(packet) = Result::unwrap(reader.read_ts_packet()) {
-             Result::unwrap(writer.write_ts_packet(&packet));
-        }
+        //Result::unwrap(writer.write_ts_packet(data));
     }
+
+    // This function is necessary for writing ts file.
+    pub fn make_ts_packet(data: &Bytes) {
+        let f = generate_adaptation_field();
+    }
+}
+
+fn generate_adaptation_field() {
+    let field = AdaptationField {
+        discontinuity_indicator: false,
+        random_access_indicator: false,
+        es_priority_indicator: false,
+        pcr: None,
+        opcr: None,
+        splice_countdown: None,
+        transport_private_data: Vec::new(),
+        extension: None,
+    };
+
+    let payload: Option<TsPayload> = None;
 }
