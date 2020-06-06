@@ -7,6 +7,7 @@ use std::path::Path;
 use mpeg2ts::ts::{TsPacketWriter, WriteTsPacket};
 use mpeg2ts::ts::{TsPacket, TsHeader, AdaptationField, TsPayload};
 use mpeg2ts::ts::{Pid, TransportScramblingControl, ContinuityCounter};
+use mpeg2ts::ts::payload;
 use bytes::Bytes;
 
 pub struct Converter;
@@ -40,12 +41,13 @@ impl Converter {
 }
 
 // This function is necessary for writing ts file.
-fn make_ts_packet(_data: &Bytes) -> TsPacket {
-    let f = generate_adaptation_field();
+fn make_ts_packet(data: &Bytes) -> TsPacket {
+    let f = generate_adaptation_field(data);
     f
 }
 
-fn generate_adaptation_field() -> TsPacket {
+fn generate_adaptation_field(data: &Bytes) -> TsPacket {
+    let data_ts_packet = payload::Bytes::new(data).unwrap();
     let header = TsHeader {
         transport_error_indicator: false,
         transport_priority: false,
@@ -63,7 +65,7 @@ fn generate_adaptation_field() -> TsPacket {
         transport_private_data: Vec::new(),
         extension: None,
     };
-    let payload: Option<TsPayload> = None;
+    let payload: Option<TsPayload> = Some(TsPayload::Raw(data_ts_packet));
 
     let packet = TsPacket {
         header: header,
