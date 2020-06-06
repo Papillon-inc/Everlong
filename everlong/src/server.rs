@@ -162,7 +162,7 @@ impl Server {
             },
 
             ServerSessionEvent::VideoDataReceived {app_name: _, stream_key, data, timestamp} => {
-                converter::Converter::convert(&data);
+                converter::Converter::convert(&data, &executed_connection_id);
                 self.handle_audio_video_data_received(stream_key, timestamp, data, ReceivedDataType::Video, server_results);
             },
 
@@ -192,8 +192,8 @@ impl Server {
             Err(error) => {
                 println!("Error occurred accepting connection request: {:?}", error);
                 server_results.push(ServerResult::DisconnectConnection {
-                    connection_id: requested_connection_id}
-                )
+                    connection_id: requested_connection_id
+                })
             },
 
             Ok(results) => {
@@ -420,6 +420,7 @@ impl Server {
                                         data: Bytes,
                                         data_type: ReceivedDataType,
                                         server_results: &mut Vec<ServerResult>) {
+
         let channel = match self.channels.get_mut(&stream_key) {
             Some(channel) => channel,
             None => return,

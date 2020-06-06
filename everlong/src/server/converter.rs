@@ -8,20 +8,20 @@ use mpeg2ts::ts::{TsPacket, TsHeader, AdaptationField, TsPayload};
 use mpeg2ts::ts::{Pid, TransportScramblingControl, ContinuityCounter};
 use bytes::Bytes;
 
-pub struct Converter {
-    count: u64,
-}
+pub struct Converter;
 
 impl Converter {
-    pub fn convert(data: &Bytes) {
-        let mut writer = TsPacketWriter::new(BufWriter::new(fs::File::create("ts/one.ts").unwrap()));
+    pub fn convert(data: &Bytes, executed_connection_id: &usize) {
+        let file_name = format!("ts/{}.ts", executed_connection_id.to_string());
+
+        let mut writer = TsPacketWriter::new(BufWriter::new(fs::File::create(file_name).unwrap()));
         let packet = make_ts_packet(data);
         Result::unwrap(writer.write_ts_packet(&packet));
     }
 }
 
 // This function is necessary for writing ts file.
-fn make_ts_packet(data: &Bytes) -> TsPacket {
+fn make_ts_packet(_data: &Bytes) -> TsPacket {
     let f = generate_adaptation_field();
     f
 }
