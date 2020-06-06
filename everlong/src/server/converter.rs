@@ -3,7 +3,8 @@ extern crate bytes;
 
 use std::fs;
 use std::io::BufWriter;
-use mpeg2ts::ts::{TsPacketReader, TsPacketWriter, ReadTsPacket, WriteTsPacket};
+use std::path::Path;
+use mpeg2ts::ts::{TsPacketWriter, WriteTsPacket};
 use mpeg2ts::ts::{TsPacket, TsHeader, AdaptationField, TsPayload};
 use mpeg2ts::ts::{Pid, TransportScramblingControl, ContinuityCounter};
 use bytes::Bytes;
@@ -12,7 +13,22 @@ pub struct Converter;
 
 impl Converter {
     pub fn convert(data: &Bytes, executed_connection_id: &usize) {
+        if !Path::new("ts").exists() {
+            match fs::create_dir("ts") {
+                Err(e) => panic!("ts: {}", e),
+                Ok(_) => ()
+            };
+        }
+
+        let dir_name = format!("ts/{}", executed_connection_id.to_string());
         let file_name = format!("ts/{}.ts", executed_connection_id.to_string());
+
+        if !Path::new(&dir_name).exists() {
+            match fs::create_dir(&dir_name) {
+                Err(e) => panic!("{}: {}", &dir_name, e),
+                Ok(_) => ()
+            };
+        }
 
         let mut writer = TsPacketWriter::new(BufWriter::new(fs::File::create(file_name).unwrap()));
         let packet = make_ts_packet(data);
