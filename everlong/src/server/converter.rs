@@ -21,7 +21,6 @@ impl Converter {
         }
 
         let dir_name = format!("ts/{}", executed_connection_id.to_string());
-        let file_name = format!("ts/{}.ts", executed_connection_id.to_string());
 
         if !Path::new(&dir_name).exists() {
             match fs::create_dir(&dir_name) {
@@ -29,6 +28,10 @@ impl Converter {
                 Ok(_) => ()
             };
         }
+
+        let dir_path = fs::read_dir(dir_name).unwrap();
+
+        let file_name = format!("ts/{}/{}.ts", executed_connection_id.to_string(), dir_path.count().to_string());
 
         let mut writer = TsPacketWriter::new(BufWriter::new(fs::File::create(file_name).unwrap()));
         let packet = make_ts_packet(data);
