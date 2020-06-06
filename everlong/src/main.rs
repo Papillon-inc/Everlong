@@ -2,6 +2,8 @@ extern crate bytes;
 extern crate slab;
 extern crate rml_rtmp;
 
+use std::fs;
+use std::path::Path;
 use std::collections::{HashSet};
 use std::net::{TcpListener, TcpStream};
 use std::sync::mpsc::{channel, Receiver, TryRecvError};
@@ -103,6 +105,14 @@ fn handle_connections(connection_receiver: Receiver<TcpStream>) {
             connection_ids.remove(&closed_id);
             connections.remove(closed_id);
             server.notify_connection_closed(closed_id);
+
+            let dir_name = format!("ts/{}", closed_id);
+            if Path::new(&dir_name).exists() {
+                match fs::remove_dir_all(&dir_name) {
+                    Err(e) => panic!("{}: {}", &dir_name, e),
+                    Ok(_) => println!("ts/{} is removed", closed_id)
+                };
+            }
         }
     }
 }
