@@ -21,7 +21,7 @@ impl Converter {
             };
         }
 
-        let dir_name = format!("ts/{}", executed_connection_id.to_string());
+        let dir_name = format!("ts/{}", executed_connection_id);
 
         if !Path::new(&dir_name).exists() {
             match fs::create_dir(&dir_name) {
@@ -32,7 +32,7 @@ impl Converter {
 
         let dir_path = fs::read_dir(dir_name).unwrap();
 
-        let file_name = format!("ts/{}/{}.ts", executed_connection_id.to_string(), dir_path.count().to_string());
+        let file_name = format!("ts/{}/{:08?}.ts", executed_connection_id, dir_path.count());
 
         let mut writer = TsPacketWriter::new(BufWriter::new(fs::File::create(file_name).unwrap()));
         let packets = make_ts_packet(data);
@@ -63,7 +63,6 @@ fn make_ts_packet(d: &Bytes) -> Vec<TsPacket> {
 }
 
 fn generate_adaptation_field(data: &Bytes) -> TsPacket {
-
     let header = TsHeader {
         transport_error_indicator: false,
         transport_priority: false,
@@ -88,7 +87,6 @@ fn generate_adaptation_field(data: &Bytes) -> TsPacket {
         payload: None,
     };
 
-    // FIXME: RUNTIME ERROR
     let data_ts_packet = payload::Bytes::new(data).unwrap();
     println!("{:}", data.len());
     let payload: Option<TsPayload> = Some(TsPayload::Raw(data_ts_packet));
