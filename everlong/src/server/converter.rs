@@ -35,19 +35,35 @@ impl Converter {
         let file_name = format!("ts/{}/{}.ts", executed_connection_id.to_string(), dir_path.count().to_string());
 
         let mut writer = TsPacketWriter::new(BufWriter::new(fs::File::create(file_name).unwrap()));
-        let packet = make_ts_packet(data);
-        Result::unwrap(writer.write_ts_packet(&packet));
+        let packets = make_ts_packet(data);
+        
+        for packet in packets.iter() {
+            Result::unwrap(writer.write_ts_packet(&packet));
+        }
     }
 }
 
 // This function is necessary for writing ts file.
-fn make_ts_packet(data: &Bytes) -> TsPacket {
-    let f = generate_adaptation_field(data);
-    f
+fn make_ts_packet(d: &Bytes) -> Vec<TsPacket> {
+    let mut packet: Vec<TsPacket> = Vec::new();
+    let mut data = d.clone();
+    let payload_size = payload::Bytes::MAX_SIZE - 4 - 2;
+
+    while data.len() > payload::Bytes::MAX_SIZE {
+        let bytes = data.slice(0..payload_size);
+        data = data.slice(payload_size..);
+        
+        let adaptation = generate_adaptation_field(&bytes);
+        packet.push(adaptation);
+    }
+    let adaptation = generate_adaptation_field(&data);
+    packet.push(adaptation);
+    
+    packet
 }
 
 fn generate_adaptation_field(data: &Bytes) -> TsPacket {
-    let data_ts_packet = payload::Bytes::new(data).unwrap();
+
     let header = TsHeader {
         transport_error_indicator: false,
         transport_priority: false,
@@ -65,12 +81,19 @@ fn generate_adaptation_field(data: &Bytes) -> TsPacket {
         transport_private_data: Vec::new(),
         extension: None,
     };
-    let payload: Option<TsPayload> = Some(TsPayload::Raw(data_ts_packet));
 
-    let packet = TsPacket {
+    let mut packet = TsPacket {
         header: header,
         adaptation_field: Some(field),
-        payload: payload,
+        payload: None,
     };
+
+    // FIXME: RUNTIME ERROR
+    let data_ts_packet = payload::Bytes::new(data).unwrap();
+    println!("{:}", data.len());
+    let payload: Option<TsPayload> = Some(TsPayload::Raw(data_ts_packet));
+
+    packet.payload = payload;
+
     packet
 }
