@@ -110,7 +110,7 @@ fn handle_connections(connection_receiver: Receiver<TcpStream>) {
             if Path::new(&dir_name).exists() {
                 match fs::remove_dir_all(&dir_name) {
                     Err(e) => panic!("{}: {}", &dir_name, e),
-                    Ok(_) => println!("ts/{} is removed", closed_id)
+                    Ok(_) => println!("../ts/{} directory is removed", closed_id)
                 };
             }
         }

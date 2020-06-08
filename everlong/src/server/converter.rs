@@ -2,8 +2,10 @@ extern crate mpeg2ts;
 extern crate bytes;
 
 use std::fs;
-use std::io::BufWriter;
+use std::fs::File;
+use std::io::{BufWriter, Write};
 use std::path::Path;
+use std::time::{SystemTime, UNIX_EPOCH};
 use mpeg2ts::ts::{TsPacketWriter, WriteTsPacket};
 use mpeg2ts::ts::{TsPacket, TsHeader, AdaptationField, TsPayload};
 use mpeg2ts::ts::{Pid, TransportScramblingControl, ContinuityCounter};
@@ -14,14 +16,14 @@ pub struct Converter;
 
 impl Converter {
     pub fn convert(data: &Bytes, executed_connection_id: &usize) {
-        if !Path::new("ts").exists() {
-            match fs::create_dir("ts") {
+        if !Path::new("../ts").exists() {
+            match fs::create_dir("../ts") {
                 Err(e) => panic!("ts: {}", e),
                 Ok(_) => ()
             };
         }
 
-        let dir_name = format!("ts/{}", executed_connection_id);
+        let dir_name = format!("../ts/{}", executed_connection_id);
 
         if !Path::new(&dir_name).exists() {
             match fs::create_dir(&dir_name) {
@@ -30,9 +32,16 @@ impl Converter {
             };
         }
 
-        let dir_path = fs::read_dir(dir_name).unwrap();
+        // let now = SystemTime::now()
+        //             .duration_since(UNIX_EPOCH)
+        //             .expect("Time went backwords")
+        //             .as_micros()
+        //             .to_string();
+        // let txt = format!("{:?}", &now);
+        //println!("{}", &txt);
 
-        let file_name = format!("ts/{}/{:08?}.ts", executed_connection_id, dir_path.count());
+        let dir_path = fs::read_dir(dir_name).unwrap();
+        let file_name = format!("../ts/{}/{:08?}.ts", executed_connection_id, dir_path.count());
 
         let mut writer = TsPacketWriter::new(BufWriter::new(fs::File::create(file_name).unwrap()));
         let packets = make_ts_packet(data);
@@ -43,13 +52,12 @@ impl Converter {
     }
 }
 
-// This function is necessary for writing ts file.
 fn make_ts_packet(d: &Bytes) -> Vec<TsPacket> {
     let mut packet: Vec<TsPacket> = Vec::new();
     let mut data = d.clone();
     let payload_size = payload::Bytes::MAX_SIZE - 4 - 2;
 
-    while data.len() > payload::Bytes::MAX_SIZE {
+    while data.len() > payload_size {
         let bytes = data.slice(0..payload_size);
         data = data.slice(payload_size..);
         
@@ -80,7 +88,6 @@ fn generate_adaptation_field(data: &Bytes) -> TsPacket {
         transport_private_data: Vec::new(),
         extension: None,
     };
-
     let mut packet = TsPacket {
         header: header,
         adaptation_field: Some(field),
@@ -88,7 +95,6 @@ fn generate_adaptation_field(data: &Bytes) -> TsPacket {
     };
 
     let data_ts_packet = payload::Bytes::new(data).unwrap();
-    println!("{:}", data.len());
     let payload: Option<TsPayload> = Some(TsPayload::Raw(data_ts_packet));
 
     packet.payload = payload;
