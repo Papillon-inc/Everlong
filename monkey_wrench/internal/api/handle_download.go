@@ -2,7 +2,7 @@ package api
 
 import (
 	"fmt"
-	"../hls"
+	"monkey_wrench/internal/hls"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os/exec"

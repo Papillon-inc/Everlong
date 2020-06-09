@@ -2,7 +2,7 @@ package cmd
 
 import (
 	homedir "github.com/mitchellh/go-homedir"
-	"../hls"
+	"monkey_wrench/internal/hls"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/exec"

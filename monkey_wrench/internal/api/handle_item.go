@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/go-chi/chi"
-	"../fileindex"
-	"../hls"
+	"monkey_wrench/internal/fileindex"
+	"monkey_wrench/internal/hls"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 )

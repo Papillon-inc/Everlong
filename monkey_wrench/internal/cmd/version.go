@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"../buildinfo"
+	"monkey_wrench/internal/buildinfo"
 	"github.com/spf13/cobra"
 )
 

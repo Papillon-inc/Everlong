@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./internal/cmd"
+	"monkey_wrench/internal/cmd"
 )
 
 func main() {

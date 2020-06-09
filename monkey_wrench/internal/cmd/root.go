@@ -11,7 +11,14 @@ var (
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "./gohls-config.json", "config file (default is ./gohls-config.json)")
+	//rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "./gohls-config.json", "config file (default is ./gohls-config.json)")
+	// NOTE: development
+	rootCmd.PersistentFlags().StringVar(
+		&cfgFile, 
+		"config", 
+		"/Users/kunosouichirou/Documents/GitHub/TheColourAndTheShape/monkey_wrench/gohls-config.json",
+		"config file (default is ./gohls-config.json)",
+	)
 }
 
 var rootCmd = &cobra.Command{

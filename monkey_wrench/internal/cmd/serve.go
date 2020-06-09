@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"../api"
-	"../config"
-	"../hls"
+	"monkey_wrench/internal/api"
+	"monkey_wrench/internal/config"
+	"monkey_wrench/internal/hls"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"net/http"

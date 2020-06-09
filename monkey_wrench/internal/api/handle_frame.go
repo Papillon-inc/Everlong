@@ -1,7 +1,7 @@
 package api
 
 import (
-	"../hls"
+	"monkey_wrench/internal/hls"
 	"net/http"
 	"strconv"
 )

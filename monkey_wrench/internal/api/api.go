@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"../config"
-	"../fileindex"
+	"monkey_wrench/internal/config"
+	"monkey_wrench/internal/fileindex"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 )

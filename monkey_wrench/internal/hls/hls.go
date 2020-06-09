@@ -7,7 +7,7 @@ import (
 
 const PlaylistContentType = "application/vnd.apple.mpegurl"
 
-var HomeDir = ".gohls"
+var HomeDir = "~/Documents/GitHub/TheColourAndTheShape/monkey_wrench"
 var FFProbePath = "ffprobe"
 var FFMPEGPath = "ffmpeg"
 

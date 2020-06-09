@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"../hls"
+	"monkey_wrench/internal/hls"
 	"github.com/spf13/cobra"
 )
 

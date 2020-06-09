@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/go-chi/chi"
-	"../hls"
+	"monkey_wrench/internal/hls"
 	"net/http"
 	"strconv"
 )
