@@ -7,6 +7,14 @@
 		{
 			"path": "~/Downloads",
 			"title": "My Downloads"
+		},
+		{
+			"path": "~/Documents",
+			"title": "My Documents"
+		},
+		{
+			"path": "~/Desktop",
+			"title": "My Desktop"
 		}
 	]
 }
