@@ -27,6 +27,7 @@ var rootCmd = &cobra.Command{
 	Long:  `GoHLS is a simple HTTP video streaming server`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Do Stuff Here
+		fmt.Println("Do Stuff Here")
 	},
 }
 

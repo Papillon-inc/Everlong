@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	homedir "github.com/mitchellh/go-homedir"
+	//homedir "github.com/mitchellh/go-homedir"
 	"monkey_wrench/internal/hls"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
-	"path"
+	//"path"
 	"strconv"
 )
 
@@ -32,13 +32,14 @@ func init_hls() {
 		log.Fatal("ffprobe could not be found in your path", err)
 	}
 
-	homeDir, err := homedir.Dir()
-	if err != nil {
-		log.Fatal("Could not determine home directory", err)
-	}
+	// _, err := homedir.Dir()
+	// if err != nil {
+	// 	log.Fatal("Could not determine home directory", err)
+	// }
 
 	// Configure HLS module
 	hls.FFMPEGPath = ffmpeg
 	hls.FFProbePath = ffprobe
-	hls.HomeDir = path.Join(homeDir, ".gohls")
+	//hls.HomeDir = path.Join(homeDir, ".gohls")
+	hls.HomeDir = "~/Documents/GitHub/TheColourAndTheShape/ts/0"
 }

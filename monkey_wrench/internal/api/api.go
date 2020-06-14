@@ -90,5 +90,6 @@ func Setup(conf *config.Config) {
 		r.HandleFunc("/item/*", handleItem)
 	})
 	router.Handle("/*", NewSingleAssetHandler("index.html"))
+	//router.Handle("/*", NewSingleAssetHandler("/Users/kunosouichirou/Documents/GitHub/TheColourAndTheShape/monkey_wrench/ui/public/index.html"))
 	http.Handle("/", router)
 }
