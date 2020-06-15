@@ -12,12 +12,10 @@ impl UdpHandler {
         let dir_name = format!("../ts/{}", _executed_connection_id);
         let dir_path = fs::read_dir(dir_name).unwrap();
         let packet = format!("{:08?}", dir_path.count());
-        print!("{:?}", packet);
 
         socket.send_to(packet.as_bytes(), "127.0.0.1:12345").expect("failed to send data");
 
         let mut buffer = [0u8; 1024];
         socket.recv_from(&mut buffer).expect("failed to receive");
-        //print!("{}", str::from_utf8(&buffer).expect("failed to convert to String"));
     }
 }

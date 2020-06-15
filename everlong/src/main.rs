@@ -19,6 +19,7 @@ fn main() {
     let (stream_sender, stream_receiver) = channel();
     thread::spawn(|| {handle_connections(stream_receiver)});
 
+    println!("RTMP Server started!");
     println!("Listening for connections on {}", address);
     for stream in listener.incoming() {
         println!("New connection!");

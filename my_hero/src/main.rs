@@ -7,23 +7,27 @@ fn main() {
                            .expect("Could not bind socket");
                     
     println!("UDP Server started!");
-    println!("Listening on port: {}", port);
+    println!("Listening for connections on {}", port);
     
     loop {
         let mut buf = [0u8; 1024];
-        // クロージャの中に移動されるからクローンする。
+        let mut result: Vec<u8> = Vec::new();
         let client_socket = server_socket.try_clone().expect("failed to clone socket");
 
         match server_socket.recv_from(&mut buf) {
-            Ok((_, src)) => {
+            Ok((number_of_bytes, src)) => {
                 thread::spawn(move || {
-                    //println!("handling data from {}", src);
+                    result = Vec::from(&buf[0..number_of_bytes]);
+                    
                     client_socket.send_to(&buf, src).expect("failed to send response");
-                    println!("Data: {:?}", &buf[..]);
+
+                    let display_result = result.clone();
+                    let result_str = String::from_utf8(display_result).unwrap();
+                    println!("{:?}", result_str);
                 });
             },
             Err(e) => {
-                eprintln!("could not recieve a datagram: {}", e);
+                eprintln!("could not receive a datagram: {}", e);
             }
         }
     }
