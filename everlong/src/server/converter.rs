@@ -2,8 +2,7 @@ extern crate mpeg2ts;
 extern crate bytes;
 
 use std::fs;
-use std::fs::File;
-use std::io::{BufWriter, Write};
+use std::io::{BufWriter};
 use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 use mpeg2ts::ts::{TsPacketWriter, WriteTsPacket};
@@ -31,14 +30,6 @@ impl Converter {
                 Ok(_) => ()
             };
         }
-
-        // let now = SystemTime::now()
-        //             .duration_since(UNIX_EPOCH)
-        //             .expect("Time went backwords")
-        //             .as_micros()
-        //             .to_string();
-        // let txt = format!("{:?}", &now);
-        //println!("{}", &txt);
 
         let dir_path = fs::read_dir(dir_name).unwrap();
         let file_name = format!("../ts/{}/{:08?}.ts", executed_connection_id, dir_path.count());
