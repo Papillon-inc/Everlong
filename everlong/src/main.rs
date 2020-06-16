@@ -21,6 +21,7 @@ fn main() {
 
     println!("RTMP Server started!");
     println!("Listening for connections on {}", address);
+    
     for stream in listener.incoming() {
         println!("New connection!");
         match stream_sender.send(stream.unwrap()) {

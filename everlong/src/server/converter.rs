@@ -4,7 +4,6 @@ extern crate bytes;
 use std::fs;
 use std::io::{BufWriter};
 use std::path::Path;
-use std::time::{SystemTime, UNIX_EPOCH};
 use mpeg2ts::ts::{TsPacketWriter, WriteTsPacket};
 use mpeg2ts::ts::{TsPacket, TsHeader, AdaptationField, TsPayload};
 use mpeg2ts::ts::{Pid, TransportScramblingControl, ContinuityCounter};
