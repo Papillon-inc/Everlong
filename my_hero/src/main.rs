@@ -3,6 +3,20 @@ use std::thread;
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::process;
 
+use my_hero::*;
+
+macro_rules! init_array(
+    ($ty:ty, $len:expr, $val:expr) => (
+        {
+            let mut array: [$ty; $len] = unsafe { std::mem::uninitialized() };
+            for i in array.iter_mut() {
+                unsafe { ::std::ptr::write(i, $val) }
+            }
+            array
+        }
+    )
+);
+
 fn main() {
     let address = "127.0.0.1:12345";
     let server_socket = UdpSocket::bind(address)
@@ -14,6 +28,7 @@ fn main() {
     handle_incoming_packets(server_socket);
 }
 
+// Packet contains a name of ts file
 fn handle_incoming_packets(socket: UdpSocket) {
     let mut time = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(v) => v.as_micros(),
@@ -22,6 +37,10 @@ fn handle_incoming_packets(socket: UdpSocket) {
             process::exit(0);
         }
     };
+    
+    let mut packet_arr = init_array!(String, 200, "-1".to_string());
+    let mut time_arr = [0u128; 200];
+    let mut count = 0;
 
     loop {
         let mut buf = [0u8; 1024];
@@ -48,9 +67,19 @@ fn handle_incoming_packets(socket: UdpSocket) {
                 let time_diff = now - time;
                 time = now;
                 println!("time_diff: {:?}", time_diff);
+
+                packet_arr[count] = result_str;
+                time_arr[count] = time_diff;
+                count += 1;
+
+                if count >= 200 {
+                    Hls::stream(&packet_arr, time_arr);
+                    count = 0;
+                }
             },
             Err(e) => {
                 eprintln!("could not receive a datagram: {}", e);
+                process::exit(0);
             }
         }
     }
