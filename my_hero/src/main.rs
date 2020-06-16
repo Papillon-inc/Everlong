@@ -25,31 +25,29 @@ fn handle_incoming_packets(socket: UdpSocket) {
 
     loop {
         let mut buf = [0u8; 1024];
-        let mut result: Vec<u8> = Vec::new();
+        let result: Vec<u8>;
         let client_socket = socket.try_clone().expect("failed to clone socket");
 
         match socket.recv_from(&mut buf) {
             Ok((number_of_bytes, src)) => {
-                thread::spawn(move || {
-                    result = Vec::from(&buf[0..number_of_bytes]);
-                    
-                    client_socket.send_to(&buf, src).expect("failed to send response");
+                result = Vec::from(&buf[0..number_of_bytes]);
+                
+                client_socket.send_to(&buf, src).expect("failed to send response");
 
-                    let display_result = result.clone();
-                    let result_str = String::from_utf8(display_result).unwrap();
-                    println!("packet: {:?}", result_str);
+                let display_result = result.clone();
+                let result_str = String::from_utf8(display_result).unwrap();
+                println!("packet: {:?}", result_str);
 
-                    let now =  match SystemTime::now().duration_since(UNIX_EPOCH) {
-                        Ok(v) => v.as_micros(),
-                        Err(_) => {
-                            println!("SystemTime is before UNIX EPOCH!");
-                            process::exit(0);
-                        }
-                    };
-                    let time_diff = now - time;
-                    time = now;
-                    println!("time_diff: {:?}", time_diff);
-                });
+                let now =  match SystemTime::now().duration_since(UNIX_EPOCH) {
+                    Ok(v) => v.as_micros(),
+                    Err(_) => {
+                        println!("SystemTime is before UNIX EPOCH!");
+                        process::exit(0);
+                    }
+                };
+                let time_diff = now - time;
+                time = now;
+                println!("time_diff: {:?}", time_diff);
             },
             Err(e) => {
                 eprintln!("could not receive a datagram: {}", e);
