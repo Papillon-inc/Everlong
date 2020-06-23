@@ -1,0 +1,17 @@
+version: "3.7"
+
+volumes:
+  hls_data:
+
+services:
+  javelin:
+    image: registry.gitlab.com/valeth/javelin:develop
+    build: .
+    command:
+      - "--permit-stream-key=123456"
+    ports:
+      - "1935:1935"
+      - "8080:8080"
+    volumes:
+      - "hls_data:/var/data"
+      - "./config:/app/config"
