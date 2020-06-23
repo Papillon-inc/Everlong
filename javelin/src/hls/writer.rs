@@ -31,6 +31,7 @@ pub struct Writer {
     stream_path: PathBuf,
     avc_coder: AvcCoder,
     aac_coder: AacCoder,
+    app_name: String,
 }
 
 impl Writer {
@@ -39,12 +40,14 @@ impl Writer {
         let next_write = write_interval; // milliseconds
 
         let hls_root = shared.config.read().hls.root_dir.clone();
-        let stream_path = hls_root.join(app_name);
+        let stream_path = hls_root.join(&app_name);
         let playlist_path = stream_path.join("playlist.m3u8");
 
         if stream_path.exists() && !stream_path.is_dir() {
             bail!("Path '{}' exists, but is not a directory", stream_path.display());
         }
+
+        println!("{:?}", stream_path);
 
         log::debug!("Creating HLS directory at '{}'", stream_path.display());
         fs::create_dir_all(&stream_path)?;
@@ -60,6 +63,7 @@ impl Writer {
             avc_coder: AvcCoder::new(),
             aac_coder: AacCoder::new(),
             stream_path,
+            app_name: app_name,
         })
     }
 
@@ -89,7 +93,7 @@ impl Writer {
                 let filename = format!("{}-{}.mpegts", Utc::now().timestamp(), self.keyframe_counter);
                 let path = self.stream_path.join(&filename);
                 self.buffer.write_to_file(&path)?;
-                let seg_filename = format!("http://localhost:8000/hls/segment/javv/{}", filename);
+                let seg_filename = format!("http://localhost:8000/hls/segment/{}/{}", self.app_name, filename);
 
                 self.playlist.add_media_segment(seg_filename, keyframe_duration);
                 self.next_write += self.write_interval;
