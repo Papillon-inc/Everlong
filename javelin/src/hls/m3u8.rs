@@ -1,6 +1,9 @@
 use {
     std::{fs, path::PathBuf, time::Duration},
-    m3u8_rs::playlist::{MediaPlaylist, MediaSegment},
+    m3u8_rs::playlist::{
+        MediaPlaylist, 
+        MediaSegment,
+    },
     tempfile::NamedTempFile,
     anyhow::Result,
     super::file_cleaner,
@@ -67,6 +70,11 @@ impl Playlist {
         segment.title = Some("".into()); // adding empty title here, because implementation is broken
         segment.uri = uri.into();
 
+        if segment.duration > self.playlist.target_duration {
+            // XXX: 根拠のない2という数字
+            self.playlist.target_duration = &segment.duration + 2.0;
+        }
+        self.playlist.target_duration = self.playlist.target_duration.round();
 
         if self.cleanup_started {
             self.schedule_for_deletion(1, Self::PLAYLIST_CACHE_DURATION);

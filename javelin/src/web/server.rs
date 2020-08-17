@@ -1,13 +1,15 @@
 use {
     std::{thread, fs},
-    warp::{Filter, Reply, Rejection, http::StatusCode},
+    std::io::Cursor,
     serde_json::json,
     super::api::{
-        api,
         Error as ApiError,
     },
+    warp::{Filter, Reply, Rejection, http::StatusCode},
     crate::Shared,
-    std::path::PathBuf
+    std::path::PathBuf,
+    rocket::http::{ContentType, Status},
+    rocket::response::Response,
 };
 
 macro_rules! json_error_response {
@@ -17,7 +19,6 @@ macro_rules! json_error_response {
         Ok(warp::reply::with_status(reply, $code))
     }};
 }
-
 
 pub struct Server {
     shared: Shared,
@@ -34,79 +35,41 @@ impl Server {
     }
 }
 
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, Rocket"
-}
-
-#[get("/hls/<name>/playlist.m3u8")]
-fn hls(name: String) -> Vec<u8> {
-    let path = format!("./tmp/stream/{}/playlist.m3u8", name);
+#[get("/hls/<name>/<file_name>")]
+fn hls<'r>(name: String, file_name: String) -> Response<'r> {
+    println!("hls called");
+    let path = format!("./tmp/stream/{}/{}", name, file_name);
     let filepath = PathBuf::from(path);
 
     match fs::read(&filepath) {
-        Ok(file) => file,
+        Ok(file) => {
+            let response = Response::build()
+                .status(Status::Ok)
+                .header(ContentType::new("application", "x-mpegURL"))
+                .raw_header("Accept-Ranges", "bytes")
+                .raw_header("Connection", "keep-alive")
+                .sized_body(Cursor::new(file))
+                .finalize();
+            response
+        },
         Err(e) => {
             println!("{}", e);
-            Vec::new()
-        }
-    }
-}
-
-#[get("/hls/segment/<app_name>/<file_name>")]
-fn hls_segment(app_name: String, file_name: String) -> Vec<u8> {
-    let path = format!("./tmp/stream/{}/{}", app_name, file_name);
-    let filepath = PathBuf::from(path);
-
-    match fs::read(&filepath) {
-        Ok(file) => file,
-        Err(e) => {
-            println!("{}", e);
-            Vec::new()
+            let response = Response::build()
+                .status(Status::Ok)
+                .header(ContentType::Plain)
+                .sized_body(Cursor::new("Error"))
+                .finalize();
+            response
         }
     }
 }
 
 // Contains some attempt codes
 fn server(shared: Shared) {
-    let addr = {
-        let config = shared.config.read();
-        config.web.addr
-    };
-
-    let hls_root = {
-        let config = shared.config.read();
-        config.hls.root_dir.clone()
-    };
-
-    println!("{:?}", hls_root);
-
     println!("http://localhost:8000/");
     rocket::ignite()
-        .mount("/", routes![index, hls, hls_segment])
+        .mount("/", routes![hls])
         .launch();
-
-    // let m3u8_file = warp::path("playlist.m3u8");
-    // let hls_files = warp::path("hls");
-    //     .and(warp::fs::dir(hls_root));
-
-    // let streams_api = warp::path("api")
-    //     .and(api(shared));
-
-    // let routes = hls_files
-    //     .or(streams_api)
-    //     .or(m3u8_file)
-    //     .map(|_| {
-    //         let filepath = PathBuf::from("./tmp/stream/javv/playlist.m3u8");
-
-    //         match fs::read(&filepath) {
-    //             Ok(file) => file,
-    //             Err(_) => Vec::new()
-    //         }
-    //     })
-    //     .recover(error_handler);
-
-    // warp::serve(routes).run(addr);
 }
 
 fn error_handler(err: Rejection) -> Result<impl Reply, Rejection> {

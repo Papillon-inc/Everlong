@@ -36,7 +36,7 @@ pub struct Writer {
 
 impl Writer {
     pub fn create(app_name: String, receiver: media::Receiver, shared: &Shared) -> Result<Self> {
-        let write_interval = 2000; // milliseconds
+        let write_interval = 9000; // milliseconds
         let next_write = write_interval; // milliseconds
 
         let hls_root = shared.config.read().hls.root_dir.clone();
@@ -90,12 +90,11 @@ impl Writer {
             }
 
             if timestamp >= self.next_write {
-                let filename = format!("{}-{}.mpegts", Utc::now().timestamp(), self.keyframe_counter);
+                let filename = format!("{}-{}.ts", Utc::now().timestamp(), self.keyframe_counter);
                 let path = self.stream_path.join(&filename);
                 self.buffer.write_to_file(&path)?;
-                let seg_filename = format!("http://localhost:8000/hls/segment/{}/{}", self.app_name, filename);
 
-                self.playlist.add_media_segment(seg_filename, keyframe_duration);
+                self.playlist.add_media_segment(filename, keyframe_duration);
                 self.next_write += self.write_interval;
             }
 
