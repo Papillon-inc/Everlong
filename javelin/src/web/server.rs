@@ -37,7 +37,6 @@ impl Server {
 
 #[get("/hls/<name>/<file_name>")]
 fn hls<'r>(name: String, file_name: String) -> Response<'r> {
-    println!("hls called");
     let path = format!("./tmp/stream/{}/{}", name, file_name);
     let filepath = PathBuf::from(path);
 

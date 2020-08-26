@@ -49,6 +49,10 @@ impl Playlist {
         self.playlist.target_duration = (duration as f64 / 1000.0) as f32;
     }
 
+    pub fn set_end_list(&mut self, is_set: bool) {
+        self.playlist.end_list = is_set;
+    }
+
     fn schedule_for_deletion(&mut self, amount: usize, delete_after: u64) {
         let segments_to_delete: Vec<_> = self.playlist.segments.drain(..amount).collect();
         let paths: Vec<_> = segments_to_delete.iter()
