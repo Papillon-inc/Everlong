@@ -12,10 +12,13 @@ use {
         flv,
         mpegts::TransportStream,
     },
-    super::m3u8::Playlist,
+    super::{
+        m3u8::Playlist,
+        video_encoder::VideoEncoder,
+    },
     crate::{
         shared::Shared,
-        media::{self, Media}
+        media::{self, Media},
     },
 };
 
@@ -93,8 +96,8 @@ impl Writer {
                 let filename = format!("{}-{}.ts", Utc::now().timestamp(), self.keyframe_counter);
                 let path = self.stream_path.join(&filename);
                 self.buffer.write_to_file(&path)?;
-
                 self.playlist.add_media_segment(filename, keyframe_duration);
+                VideoEncoder::encode_h264_mpeg2(&path);
                 self.next_write += self.write_interval;
             }
 
