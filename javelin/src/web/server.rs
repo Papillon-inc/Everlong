@@ -70,7 +70,7 @@ fn hls<'r>(name: String, file_name: String) -> Response<'r> {
 
 // Contains some attempt codes
 fn server(shared: Shared) {
-    println!("http://localhost:8000/");
+    println!("http://0.0.0.0:8000/");
     rocket::ignite()
         .mount("/", routes![index, hls])
         .launch();

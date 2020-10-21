@@ -97,7 +97,7 @@ impl Handler {
     fn handle_event(&mut self, event: Event) -> Result<(), Error> {
         use self::Event::*;
 
-        log::debug!("Handling event...");
+        //log::debug!("Handling event...");
         match event {
             ConnectionRequested { request_id, app_name } => {
                 self.connection_requested(request_id, &app_name)?;
