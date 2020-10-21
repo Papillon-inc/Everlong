@@ -50,7 +50,7 @@ impl Writer {
             bail!("Path '{}' exists, but is not a directory", stream_path.display());
         }
 
-        println!("{:?}", stream_path);
+        println!("stream_path: {:?}", stream_path);
 
         log::debug!("Creating HLS directory at '{}'", stream_path.display());
         fs::create_dir_all(&stream_path)?;

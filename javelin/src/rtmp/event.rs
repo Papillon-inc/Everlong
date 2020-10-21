@@ -97,6 +97,7 @@ impl Handler {
     fn handle_event(&mut self, event: Event) -> Result<(), Error> {
         use self::Event::*;
 
+        log::debug!("Handling event...");
         match event {
             ConnectionRequested { request_id, app_name } => {
                 self.connection_requested(request_id, &app_name)?;
@@ -183,9 +184,13 @@ impl Handler {
             }
         }
 
+        log::debug!("Stream Configuration is done");
+
         // TODO: lift out of event handler
         #[cfg(feature = "hls")]
         self.register_on_hls_server(app_name.clone());
+
+        log::debug!("Registered on HLS Server");
 
         let result = {
             let mut clients = self.shared.clients.lock();

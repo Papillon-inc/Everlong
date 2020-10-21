@@ -13,7 +13,8 @@ RUN mkdir -p /build/out
 WORKDIR /build
 
 COPY ./ ./
-RUN cargo build --release \
+RUN rustup install nightly
+RUN rustup nightly run cargo build --release \
  && cp target/release/javelin ./out
 
 
