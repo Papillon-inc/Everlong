@@ -35,6 +35,11 @@ impl Server {
     }
 }
 
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
+
 #[get("/hls/<name>/<file_name>")]
 fn hls<'r>(name: String, file_name: String) -> Response<'r> {
     let path = format!("./tmp/stream/{}/{}", name, file_name);
@@ -67,7 +72,7 @@ fn hls<'r>(name: String, file_name: String) -> Response<'r> {
 fn server(shared: Shared) {
     println!("http://localhost:8000/");
     rocket::ignite()
-        .mount("/", routes![hls])
+        .mount("/", routes![index, hls])
         .launch();
 }
 
